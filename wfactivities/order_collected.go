@@ -1,8 +1,7 @@
-package activities
+package wfactivities
 
 import (
     "context"
-    "time"
     "go.uber.org/cadence/activity"
 )
 

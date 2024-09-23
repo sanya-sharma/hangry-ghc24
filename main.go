@@ -16,7 +16,7 @@ import (
     "go.uber.org/zap/zapcore"
     "go.uber.org/yarpc"
     "go.uber.org/yarpc/transport/grpc"
-    "./activities"
+    activities "github.com/sanya-sharma/hangry-ghc24/wfactivities"
 )
 
 var HostPort = "127.0.0.1:7833"
@@ -107,42 +107,42 @@ func helloWorldWorkflow(ctx workflow.Context, name string) error {
 	}
 
 	var orderReceivedResult string
-	err := workflow.ExecuteActivity(ctx, activities.OrderReceived, name).Get(ctx, &orderReceivedResult)
+	err = workflow.ExecuteActivity(ctx, activities.OrderReceived, name).Get(ctx, &orderReceivedResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
 	var notificationResult string
-	err := workflow.ExecuteActivity(ctx, activities.Notification, name).Get(ctx, &notificationResult)
+	err = workflow.ExecuteActivity(ctx, activities.Notification, name).Get(ctx, &notificationResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
 	var deliveryAgentResult string
-	err := workflow.ExecuteActivity(ctx, activities.DeliveryAgent, name).Get(ctx, &deliveryAgentResult)
+	err = workflow.ExecuteActivity(ctx, activities.DeliveryAgent, name).Get(ctx, &deliveryAgentResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
 	var orderReady string
-	err := workflow.ExecuteActivity(ctx, activities.OrderReady, name).Get(ctx, &orderReady)
+	err = workflow.ExecuteActivity(ctx, activities.OrderReady, name).Get(ctx, &orderReady)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
 	var orderCollectedResult string
-	err := workflow.ExecuteActivity(ctx, activities.OrderCollected, name).Get(ctx, &orderCollectedResult)
+	err = workflow.ExecuteActivity(ctx, activities.OrderCollected, name).Get(ctx, &orderCollectedResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
 	var deliveryResult string
-	err := workflow.ExecuteActivity(ctx, activities.Delivery, name).Get(ctx, &deliveryResult)
+	err = workflow.ExecuteActivity(ctx, activities.Delivery, name).Get(ctx, &deliveryResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
