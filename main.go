@@ -106,29 +106,22 @@ func helloWorldWorkflow(ctx workflow.Context, name string) error {
 		return err
 	}
 
-	var orderReceivedResult string
-	err = workflow.ExecuteActivity(ctx, activities.OrderReceived, name).Get(ctx, &orderReceivedResult)
+	var validateOrderResult string
+	err = workflow.ExecuteActivity(ctx, activities.ValidateOrder, name).Get(ctx, &validateOrderResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
-	var notificationResult string
-	err = workflow.ExecuteActivity(ctx, activities.Notification, name).Get(ctx, &notificationResult)
+	var updateOrderStatusResult string
+	err = workflow.ExecuteActivity(ctx, activities.UpdateOrderStatus, name).Get(ctx, &updateOrderStatusResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
-	var deliveryAgentResult string
-	err = workflow.ExecuteActivity(ctx, activities.DeliveryAgent, name).Get(ctx, &deliveryAgentResult)
-	if err != nil {
-		logger.Error("Activity failed.", zap.Error(err))
-		return err
-	}
-
-	var orderReady string
-	err = workflow.ExecuteActivity(ctx, activities.OrderReady, name).Get(ctx, &orderReady)
+	var assignDeliveryAgentResult string
+	err = workflow.ExecuteActivity(ctx, activities.AssignDeliveryAgent, name).Get(ctx, &assignDeliveryAgentResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
@@ -141,8 +134,15 @@ func helloWorldWorkflow(ctx workflow.Context, name string) error {
 		return err
 	}
 
-	var deliveryResult string
-	err = workflow.ExecuteActivity(ctx, activities.Delivery, name).Get(ctx, &deliveryResult)
+	var deliveryConfirmationResult string
+	err = workflow.ExecuteActivity(ctx, activities.DeliveryConfirmation, name).Get(ctx, &deliveryConfirmationResult)
+	if err != nil {
+		logger.Error("Activity failed.", zap.Error(err))
+		return err
+	}
+
+	var collectFeedbackResult string
+	err = workflow.ExecuteActivity(ctx, activities.CollectFeedback, name).Get(ctx, &collectFeedbackResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
@@ -162,10 +162,10 @@ func helloWorldActivity(ctx context.Context, name string) (string, error) {
 func init() {
     workflow.Register(helloWorldWorkflow)
     activity.Register(helloWorldActivity)
-    activity.Register(activities.OrderReceived)
-    activity.Register(activities.Notification)
-    activity.Register(activities.DeliveryAgent)
-    activity.Register(activities.OrderReady)
+    activity.Register(activities.ValidateOrder)
+    activity.Register(activities.UpdateOrderStatus)
+    activity.Register(activities.AssignDeliveryAgent)
     activity.Register(activities.OrderCollected)
-    activity.Register(activities.Delivery)
+    activity.Register(activities.DeliveryConfirmation)
+    activity.Register(activities.CollectFeedback)
 }
