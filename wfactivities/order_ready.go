@@ -5,8 +5,8 @@ import (
     "go.uber.org/cadence/activity"
 )
 
-func OrderReady(ctx context.Context, name string) (string, error) {
+func OrderReady(ctx context.Context, dish string, customer string) (string, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("OrderReady activity started")
-	return "Order " + name + " Ready!", nil
+	return dish + " Order ready for " + customer + "!", nil
 }

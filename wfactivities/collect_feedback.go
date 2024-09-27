@@ -5,8 +5,8 @@ import (
     "go.uber.org/cadence/activity"
 )
 
-func CollectFeedback(ctx context.Context, name string) (string, error) {
+func CollectFeedback(ctx context.Context, dish string, customer string) (string, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("CollectFeedback activity started")
-	return "CollectFeedback for " + name + " started!", nil
+	return "Collecting feedback from " + customer + " for" + dish, nil
 }
