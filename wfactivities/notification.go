@@ -5,8 +5,8 @@ import (
     "go.uber.org/cadence/activity"
 )
 
-func Notification(ctx context.Context, name string) (string, error) {
+func Notification(ctx context.Context, dish string, customer string) (string, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("Notification activity started")
-	return "Notification for " + name + " sent!", nil
+	return "Notification for " + customer + "'s "+ dish + " sent!", nil
 }

@@ -20,9 +20,9 @@ import (
 )
 
 var HostPort = "127.0.0.1:7833"
-var Domain = "test-domain"
-var TaskListName = "test-worker"
-var ClientName = "test-worker"
+var Domain = "hangry-ghc24-domain"
+var TaskListName = "hangry-worker"
+var ClientName = "hangry-worker"
 var CadenceService = "cadence-frontend"
 
 func main() {
@@ -88,7 +88,14 @@ func startWorker(logger *zap.Logger, service workflowserviceclient.Interface) {
     logger.Info("Started Worker.", zap.String("worker", TaskListName))
 }
 
-func helloWorldWorkflow(ctx workflow.Context, name string) error {
+func eatsOrderWorkflow(ctx workflow.Context, input []interface{}) error {
+	logger := workflow.GetLogger(ctx)
+	dish := input[0].(string)
+	customer := input[1].(string)
+	shouldFail := input[2].(bool)
+	logger.Info("eatsOrder workflow started", zap.String("Dish", dish), zap.String("Customer", customer), zap.Bool("ShouldFail", shouldFail))
+
+
 	ao := workflow.ActivityOptions{
 		ScheduleToStartTimeout: time.Minute,
 		StartToCloseTimeout:    time.Minute,
@@ -96,59 +103,52 @@ func helloWorldWorkflow(ctx workflow.Context, name string) error {
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
-	logger := workflow.GetLogger(ctx)
-	logger.Info("helloworld workflow started")
-
-	var helloworldResult string
-	err := workflow.ExecuteActivity(ctx, helloWorldActivity, name).Get(ctx, &helloworldResult)
-	if err != nil {
-		logger.Error("Activity failed.", zap.Error(err))
-		return err
-	}
+	logger = workflow.GetLogger(ctx)
+	logger.Info("eatsOrder workflow started")
 
 	var validateOrderResult string
-	err = workflow.ExecuteActivity(ctx, activities.ValidateOrder, name).Get(ctx, &validateOrderResult)
+	err := workflow.ExecuteActivity(ctx, activities.ValidateOrder, dish, customer).Get(ctx, &validateOrderResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
 	var updateOrderStatusResult string
-	err = workflow.ExecuteActivity(ctx, activities.UpdateOrderStatus, name).Get(ctx, &updateOrderStatusResult)
+	err = workflow.ExecuteActivity(ctx, activities.UpdateOrderStatus, dish, customer).Get(ctx, &updateOrderStatusResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
 	var assignDeliveryAgentResult string
-	err = workflow.ExecuteActivity(ctx, activities.AssignDeliveryAgent, name).Get(ctx, &assignDeliveryAgentResult)
+	err = workflow.ExecuteActivity(ctx, activities.AssignDeliveryAgent, customer, shouldFail).Get(ctx, &assignDeliveryAgentResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
 	var orderCollectedResult string
-	err = workflow.ExecuteActivity(ctx, activities.OrderCollected, name).Get(ctx, &orderCollectedResult)
+	err = workflow.ExecuteActivity(ctx, activities.OrderCollected, dish, customer).Get(ctx, &orderCollectedResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
 	var deliveryConfirmationResult string
-	err = workflow.ExecuteActivity(ctx, activities.DeliveryConfirmation, name).Get(ctx, &deliveryConfirmationResult)
+	err = workflow.ExecuteActivity(ctx, activities.DeliveryConfirmation, customer).Get(ctx, &deliveryConfirmationResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
 	var collectFeedbackResult string
-	err = workflow.ExecuteActivity(ctx, activities.CollectFeedback, name).Get(ctx, &collectFeedbackResult)
+	err = workflow.ExecuteActivity(ctx, activities.CollectFeedback, dish, customer).Get(ctx, &collectFeedbackResult)
 	if err != nil {
 		logger.Error("Activity failed.", zap.Error(err))
 		return err
 	}
 
-	logger.Info("Workflow completed.", zap.String("Result", helloworldResult))
+	logger.Info("Workflow completed.")
 
 	return nil
 }
@@ -160,8 +160,7 @@ func helloWorldActivity(ctx context.Context, name string) (string, error) {
 }
 
 func init() {
-    workflow.Register(helloWorldWorkflow)
-    activity.Register(helloWorldActivity)
+    workflow.Register(eatsOrderWorkflow)
     activity.Register(activities.ValidateOrder)
     activity.Register(activities.UpdateOrderStatus)
     activity.Register(activities.AssignDeliveryAgent)

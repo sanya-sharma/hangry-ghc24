@@ -5,8 +5,8 @@ import (
     "go.uber.org/cadence/activity"
 )
 
-func ValidateOrder(ctx context.Context, name string) (string, error) {
+func ValidateOrder(ctx context.Context, dish string, customer string) (string, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("ValidateOrder activity started")
-	return "ValidateOrder for " + name + " found!", nil
+	return dish + "Order validated for " + customer + "!", nil
 }
