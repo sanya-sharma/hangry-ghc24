@@ -3,6 +3,7 @@ package wfactivities
 import (
 	"context"
 	"go.uber.org/cadence/activity"
+	"time"
 )
 
 func ValidateOrder(ctx context.Context, name string) (string, error) {
@@ -12,6 +13,7 @@ func ValidateOrder(ctx context.Context, name string) (string, error) {
 	// Get a logger to log retry attempts
 	logger := activity.GetLogger(ctx)
 	logger.Info("ValidateOrder activity started")
+	time.Sleep(5 * time.Second)
 
 	// Simulate a failure for first 2 attempts and succeed on the 3rd attempt
 	if info.Attempt < 3 {
