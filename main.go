@@ -89,88 +89,35 @@ func startWorker(logger *zap.Logger, service workflowserviceclient.Interface) {
 }
 
 func eatsOrderWorkflow(ctx workflow.Context, input []interface{}) error {
-	logger := workflow.GetLogger(ctx)
 	dish := input[0].(string)
 	customer := input[1].(string)
 	shouldFail := input[2].(bool)
-	logger.Info("eatsOrder workflow started", zap.String("Dish", dish), zap.String("Customer", customer), zap.Bool("ShouldFail", shouldFail))
 
 	ao := workflow.ActivityOptions{
-		RetryPolicy: &workflow.RetryPolicy{
-			InitialInterval:    10 * time.Second,
-			BackoffCoefficient: 1,
-			MaximumInterval:    time.Second * 10,
-			ExpirationInterval: time.Minute * 5,
-			MaximumAttempts:    4,
-		},
-		ScheduleToStartTimeout: 10 * time.Minute,
-		StartToCloseTimeout:    10 * time.Minute,
-		HeartbeatTimeout:       time.Second * 20,
+		// TODO: Activity Options
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
-	logger = workflow.GetLogger(ctx)
+	logger := workflow.GetLogger(ctx)
 	logger.Info("eatsOrder workflow started")
 
-	var validateOrderResult string
-	err := workflow.ExecuteActivity(ctx, activities.ValidateOrder, dish, customer).Get(ctx, &validateOrderResult)
-	if err != nil {
-		logger.Error("Activity failed.", zap.Error(err))
-		return err
-	}
+	//TODO: ValidateOrder
 
-	var updateOrderStatusResult string
-	err = workflow.ExecuteActivity(ctx, activities.UpdateOrderStatus, dish, customer).Get(ctx, &updateOrderStatusResult)
-	if err != nil {
-		logger.Error("Activity failed.", zap.Error(err))
-		return err
-	}
+	//TODO: UpdateOrderStatus
 
-	var assignDeliveryAgentResult string
-	err = workflow.ExecuteActivity(ctx, activities.AssignDeliveryAgent, customer, shouldFail).Get(ctx, &assignDeliveryAgentResult)
-	if err != nil {
-		logger.Error("Activity failed.", zap.Error(err))
-		return err
-	}
+	//TODO: AssignDeliveryAgent
 
-	var orderCollectedResult string
-	err = workflow.ExecuteActivity(ctx, activities.OrderCollected, dish, customer).Get(ctx, &orderCollectedResult)
-	if err != nil {
-		logger.Error("Activity failed.", zap.Error(err))
-		return err
-	}
+	//TODO: OrderCollected
 
-	var deliveryConfirmationResult string
-	err = workflow.ExecuteActivity(ctx, activities.DeliveryConfirmation, customer).Get(ctx, &deliveryConfirmationResult)
-	if err != nil {
-		logger.Error("Activity failed.", zap.Error(err))
-		return err
-	}
+	//TODO: DeliveryConfirmation
 
-	var collectFeedbackResult string
-	err = workflow.ExecuteActivity(ctx, activities.CollectFeedback, dish, customer).Get(ctx, &collectFeedbackResult)
-	if err != nil {
-		logger.Error("Activity failed.", zap.Error(err))
-		return err
-	}
+	//TODO: CollectFeedback
 
 	logger.Info("Workflow completed.")
 
 	return nil
 }
 
-func helloWorldActivity(ctx context.Context, name string) (string, error) {
-	logger := activity.GetLogger(ctx)
-	logger.Info("helloworld activity started")
-	return "Hello " + name + "!", nil
-}
-
 func init() {
-	workflow.Register(eatsOrderWorkflow)
-	activity.Register(activities.ValidateOrder)
-	activity.Register(activities.UpdateOrderStatus)
-	activity.Register(activities.AssignDeliveryAgent)
-	activity.Register(activities.OrderCollected)
-	activity.Register(activities.DeliveryConfirmation)
-	activity.Register(activities.CollectFeedback)
+	// TODO: Register workflow and activities
 }
