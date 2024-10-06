@@ -7,7 +7,6 @@ import (
 )
 
 func ValidateOrder(ctx context.Context, name string) (string, error) {
-
 	info := activity.GetInfo(ctx)
 
 	// Get a logger to log retry attempts
