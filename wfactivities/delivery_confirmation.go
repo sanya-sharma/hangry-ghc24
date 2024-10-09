@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func DeliveryConfirmation(ctx context.Context, customer string) (string, error) {
+func DeliveryConfirmation(ctx context.Context, dish string, customer string, shouldFail bool) (string, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("DeliveryConfirmation activity started")
 	time.Sleep(10 * time.Second)

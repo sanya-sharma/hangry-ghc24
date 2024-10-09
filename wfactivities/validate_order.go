@@ -6,9 +6,7 @@ import (
 	"time"
 )
 
-func ValidateOrder(ctx context.Context, name string) (string, error) {
-
-	info := activity.GetInfo(ctx)
+func ValidateOrder(ctx context.Context, dish string, customer string, shouldFail bool) (string, error) {
 
 	// Get a logger to log retry attempts
 	logger := activity.GetLogger(ctx)
@@ -16,12 +14,7 @@ func ValidateOrder(ctx context.Context, name string) (string, error) {
 	time.Sleep(5 * time.Second)
 
 	// Simulate a failure for first 2 attempts and succeed on the 3rd attempt
-	if info.Attempt < 3 {
-		logger.Info("ValidateOrder activity failed")
-		return "", nil
-	}
 
-	// Succeed on the 3rd attempt
 	logger.Info("ValidateOrder activity succeeded")
-	return "ValidateOrder for " + name + " found!", nil
+	return "Order validated for " + customer + "!", nil
 }

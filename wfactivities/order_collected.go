@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func OrderCollected(ctx context.Context, dish string, customer string) (string, error) {
+func OrderCollected(ctx context.Context, dish string, customer string, shouldFail bool) (string, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("OrderCollected activity started")
 	time.Sleep(10 * time.Second)

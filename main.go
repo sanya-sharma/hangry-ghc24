@@ -1,16 +1,16 @@
 package main
 
 import (
-	"context"
+	// "context"
 	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
-	"go.uber.org/cadence/activity"
+	// "go.uber.org/cadence/activity"
 	"go.uber.org/cadence/compatibility"
 	"go.uber.org/cadence/worker"
 	"go.uber.org/cadence/workflow"
 	"net/http"
-	"time"
+	// "time"
 
-	activities "github.com/sanya-sharma/hangry-ghc24/wfactivities"
+	// activities "github.com/sanya-sharma/hangry-ghc24/wfactivities"
 	"github.com/uber-go/tally"
 	apiv1 "github.com/uber/cadence-idl/go/proto/api/v1"
 	"go.uber.org/yarpc"
@@ -89,9 +89,9 @@ func startWorker(logger *zap.Logger, service workflowserviceclient.Interface) {
 }
 
 func eatsOrderWorkflow(ctx workflow.Context, input []interface{}) error {
-	dish := input[0].(string)
-	customer := input[1].(string)
-	shouldFail := input[2].(bool)
+	// dish := input[0].(string)
+	// customer := input[1].(string)
+	// shouldFail := input[2].(bool)
 
 	ao := workflow.ActivityOptions{
 		// TODO: Activity Options
